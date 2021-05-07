@@ -12,11 +12,10 @@ client.once('ready', () => {
     }, 60 * 60 * 1000);
 });
 
-// TODO: .env this
 client.login(process.env.BOT_TOKEN);
 
 client.on('message', msg => {
-  if (msg.channel.id == techChannelID && msg.content == "Allahu Akbar") {
+  if (msg.content == "Allahu Akbar") {
     msg.channel.send('Peace be with you Brother!');
   }
 });
