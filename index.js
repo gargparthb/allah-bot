@@ -13,7 +13,7 @@ client.once('ready', () => {
 });
 
 // TODO: .env this
-client.login(process.env.BOT_ENV);
+client.login(process.env.BOT_TOKEN);
 
 client.on('message', msg => {
   if (msg.channel.id == techChannelID && msg.content == "Allahu Akbar") {
