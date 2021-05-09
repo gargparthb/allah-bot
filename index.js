@@ -6,10 +6,6 @@ let techChannelID = '840000105535897610';
 
 client.once('ready', () => {
   console.log('Allahu Akbar');
-  let techChannel =
-    setInterval(() => {
-      client.channels.fetch(techChannelID).then(channel => channel.send("NO HARAM"))
-    }, 60 * 60 * 1000);
 });
 
 client.login(process.env.BOT_TOKEN);
