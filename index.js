@@ -18,7 +18,13 @@ client.on('message', msg => {
     const command = args.shift().toLowerCase();
 
     if (command === 'shame') {
-      msg.channel.send(`${msg.author.toString()} has shamed ${msg.mentions.members.find(() => true).toString()}`);
+      const shamee = msg.mentions.members.find(() => true);
+
+      if (shamee.roles.highest.name === 'Caliph') {
+        msg.channel.send(`Shame on ${msg.author.toString()}, for trying to shame the Caliph!`);
+      } else {
+        msg.channel.send(`${msg.author.toString()} has shamed ${shamee.toString()}`);
+      }
     }
   }
 });
