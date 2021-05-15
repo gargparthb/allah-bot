@@ -11,8 +11,8 @@ const commandFiles = readdirSync('./commands')
   .filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
-  const command = import(`./commands/${file}`);
-  client.commands.set(command.name, command);
+  import(`./commands/${file}`)
+    .then(command => client.commands.set(command.name, command));
 }
 
 client.once('ready', () => {
