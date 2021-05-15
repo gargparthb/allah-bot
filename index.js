@@ -1,5 +1,10 @@
-import { readdirSync } from 'fs';
-import { Client, Collection } from 'discord.js';
+import {
+  readdirSync
+} from 'fs';
+import {
+  Client,
+  Collection
+} from 'discord.js';
 const client = new Client();
 
 import dotenv from 'dotenv';
@@ -22,7 +27,7 @@ client.once('ready', () => {
 client.login(process.env.BOT_TOKEN);
 
 client.on('message', msg => {
-  if (msg.content == "Allahu Akbar") {
+  if (msg.content.toLowerCase() == "Allahu Akbar") {
     msg.channel.send('Peace be with you Brother!');
   }
 
