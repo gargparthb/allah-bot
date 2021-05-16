@@ -10,6 +10,8 @@ const client = new Client();
 import dotenv from 'dotenv';
 dotenv.config();
 
+import mongoose from 'mongoose';
+
 client.commands = new Collection();
 
 const commandFiles = readdirSync('./commands')
@@ -17,17 +19,19 @@ const commandFiles = readdirSync('./commands')
 
 for (const file of commandFiles) {
   import(`./commands/${file}`)
-    .then(command => client.commands.set(command.name, command));
+    .then(command => client.commands.set(command.name, command))
+    .catch(error => console.error(error));
 }
+
+client.login(process.env.BOT_TOKEN)
+  .catch(err => console.error(err));
 
 client.once('ready', () => {
   console.log('Allahu Akbar');
 });
 
-client.login(process.env.BOT_TOKEN);
-
 client.on('message', msg => {
-  if (msg.content.toLowerCase() == "Allahu Akbar") {
+  if (msg.content.toLowerCase() == "allahu akbar") {
     msg.channel.send('Peace be with you Brother!');
   }
 
@@ -45,3 +49,12 @@ client.on('message', msg => {
     }
   }
 });
+
+// database connection
+mongoose.connect(process.env.DB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false
+  })
+  .then(_ => console.log('DB connected'))
+  .catch(err => console.error(err));
