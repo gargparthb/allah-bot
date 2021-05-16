@@ -4,9 +4,8 @@ import {
 } from "discord.js";
 
 import Member from '../Member.js';
-import {
-  Model
-} from "mongoose";
+import mongoose from 'mongoose';
+const { Model } = mongoose
 
 export const name = 'shame';
 export function execute(msg, args, client) {
@@ -24,7 +23,8 @@ export function execute(msg, args, client) {
       .setThumbnail(client.user.displayAvatarURL())
       .addField('Shamer:', client.user.toString(), true)
       .addField('Shamee:', msg.member.toString(), true)
-      .addField('Reason:', "For attempting to shame to Caliph!");
+      .addField('Reason:', "For attempting to shame to Caliph!")
+      .addField('Shame Count:', getShameCount(msg.member.id));
 
     msg.channel.send(caliphEmbed);
     shameeID = msg.member.id;
@@ -41,9 +41,19 @@ export function execute(msg, args, client) {
       shameEmbed.addField('Reason:', args.slice(1).join(' '), false);
     }
 
+    // let shameCount = getUser(mentioned.id)
+    //   .then(x => x ? x : 0)
+    //   .catch(err => console.error(err));
+
+    getUser(mentioned.id)
+      .then(x => shameEmbed.addField('Shame Count:', x, false));
+
+
     msg.channel.send(shameEmbed);
     shameeID = mentioned.id;
   }
+}
 
-  //console.log(Member.findById(shameeID));
+function getUser(shameeID) {
+  return Member.findById(shameeID).exec();
 }
