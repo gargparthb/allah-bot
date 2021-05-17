@@ -26,8 +26,24 @@ export function execute(msg, args, client) {
       .addField('Reason:', "For attempting to shame to Caliph!")
       .addField('Shame Count:', getShameCount(msg.member.id));
 
-    msg.channel.send(caliphEmbed);
+
     shameeID = msg.member.id;
+
+    Member.findById(shameeID, function (err, member) {
+      let count = 1;
+
+      if (member) {
+        count = member.numberOfTimesShammed;
+      } else {
+        new Member({ _id: shameeID }).save()
+          .catch(err => console.error(err));
+      }
+
+      caliphEmbed.addField('Shame Count:', count, false);
+
+      msg.channel.send(caliphEmbed);
+    });
+
   } else {
     let shameEmbed = new MessageEmbed()
       .setTitle(`A Public Shaming,`)
@@ -41,19 +57,26 @@ export function execute(msg, args, client) {
       shameEmbed.addField('Reason:', args.slice(1).join(' '), false);
     }
 
-    // let shameCount = getUser(mentioned.id)
-    //   .then(x => x ? x : 0)
-    //   .catch(err => console.error(err));
-
-    getUser(mentioned.id)
-      .then(x => shameEmbed.addField('Shame Count:', x, false));
-
-
-    msg.channel.send(shameEmbed);
     shameeID = mentioned.id;
-  }
-}
 
-function getUser(shameeID) {
-  return Member.findById(shameeID).exec();
+    Member.findById(shameeID, function (err, member) {
+      let count = 1;
+
+      if (member) {
+        count = member.numberOfTimesShammed;
+      } else {
+        new Member({ _id: shameeID }).save()
+          .catch(err => console.error(err));
+      }
+
+      shameEmbed.addField('Shame Count:', count, false);
+
+
+      msg.channel.send(shameEmbed);
+    });
+
+  }
+
+  Member.findByIdAndUpdate(shameeID, { $inc: { 'numberOfTimesShammed': 1 } }).exec();
+
 }

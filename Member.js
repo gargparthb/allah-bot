@@ -5,7 +5,7 @@ const MemberSchema = new Schema({
   _id: String,
   numberOfTimesShammed: {
     type: Number,
-    default: 0
+    default: 1
   }
 });
 

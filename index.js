@@ -52,9 +52,9 @@ client.on('message', msg => {
 
 // database connection
 mongoose.connect(process.env.DB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false
-  })
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false
+})
   .then(_ => console.log('DB connected'))
   .catch(err => console.error(err));
