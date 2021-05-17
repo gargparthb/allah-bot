@@ -24,8 +24,6 @@ export function execute(msg, args, client) {
       .addField('Shamer:', client.user.toString(), true)
       .addField('Shamee:', msg.member.toString(), true)
       .addField('Reason:', "For attempting to shame to Caliph!")
-      .addField('Shame Count:', getShameCount(msg.member.id));
-
 
     shameeID = msg.member.id;
 
