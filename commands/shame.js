@@ -5,7 +5,6 @@ import {
 
 import Member from '../Member.js';
 import mongoose from 'mongoose';
-const { Model } = mongoose
 
 export const name = 'shame';
 export function execute(msg, args, client) {
@@ -17,38 +16,14 @@ export function execute(msg, args, client) {
   // seperates the caliph shamming case
   if (mentioned.roles.cache.some(role => role.name == 'Caliph')) {
 
-    const caliphEmbed = new MessageEmbed()
-      .setTitle(`A Public Shaming,`)
-      .setColor('RANDOM')
-      .setThumbnail(client.user.displayAvatarURL())
-      .addField('Shamer:', client.user.toString(), true)
-      .addField('Shamee:', msg.member.toString(), true)
-      .addField('Reason:', "For attempting to shame to Caliph!")
+    const caliphEmbed = generateShameEmbed(client, client.user, msg.member)
+      .addField('Reason:', "For attempting to shame to Caliph!");
 
     shameeID = msg.member.id;
-
-    Member.findById(shameeID, function (err, member) {
-      let count = 1;
-
-      if (member) {
-        count = member.numberOfTimesShammed;
-      } else {
-        new Member({ _id: shameeID }).save()
-          .catch(err => console.error(err));
-      }
-
-      caliphEmbed.addField('Shame Count:', count, false);
-
-      msg.channel.send(caliphEmbed);
-    });
+    prepareEmbed(shameeID, caliphEmbed, msg);
 
   } else {
-    let shameEmbed = new MessageEmbed()
-      .setTitle(`A Public Shaming,`)
-      .setColor('RANDOM')
-      .setThumbnail(client.user.displayAvatarURL())
-      .addField('Shamer:', msg.member.toString(), true)
-      .addField('Shamee:', mentioned.toString(), true);
+    let shameEmbed = generateShameEmbed(client, msg.member, mentioned);
 
     // maybe add a reason
     if (args.length > 1) {
@@ -56,25 +31,35 @@ export function execute(msg, args, client) {
     }
 
     shameeID = mentioned.id;
-
-    Member.findById(shameeID, function (err, member) {
-      let count = 1;
-
-      if (member) {
-        count = member.numberOfTimesShammed;
-      } else {
-        new Member({ _id: shameeID }).save()
-          .catch(err => console.error(err));
-      }
-
-      shameEmbed.addField('Shame Count:', count, false);
-
-
-      msg.channel.send(shameEmbed);
-    });
-
+    prepareEmbed(shameeID, shameEmbed, msg);
   }
 
   Member.findByIdAndUpdate(shameeID, { $inc: { 'numberOfTimesShammed': 1 } }).exec();
 
+}
+
+function generateShameEmbed(client, shamer, shamee) {
+  return new MessageEmbed()
+    .setTitle(`A Public Shaming,`)
+    .setColor('RANDOM')
+    .setThumbnail(client.user.displayAvatarURL())
+    .addField('Shamer:', shamer.toString(), true)
+    .addField('Shamee:', shamee.toString(), true);
+}
+
+function prepareEmbed(shameeID, embed, msg) {
+  Member.findById(shameeID, (err, member) => {
+    let count = 1;
+
+    if (member) {
+      count = member.numberOfTimesShammed;
+    } else {
+      new Member({ _id: shameeID }).save()
+        .catch(err => console.error(err));
+    }
+
+    embed.addField('Shame Count:', count, false);
+
+    msg.channel.send(embed);
+  });
 }
