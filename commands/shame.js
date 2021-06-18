@@ -11,16 +11,13 @@ export function execute(msg, args, client) {
   // gets the guild member mentions
   const mentioned = msg.mentions.members.first();
 
-  let shameeID;
-
   // seperates the caliph shamming case
   if (mentioned.roles.cache.some(role => role.name == 'Caliph')) {
 
     const caliphEmbed = generateShameEmbed(client, client.user, msg.member)
       .addField('Reason:', "For attempting to shame to Caliph!");
 
-    shameeID = msg.member.id;
-    prepareEmbed(shameeID, caliphEmbed, msg);
+    prepareEmbed(msg.member.id, caliphEmbed, msg);
 
   } else {
     let shameEmbed = generateShameEmbed(client, msg.member, mentioned);
@@ -30,11 +27,8 @@ export function execute(msg, args, client) {
       shameEmbed.addField('Reason:', args.slice(1).join(' '), false);
     }
 
-    shameeID = mentioned.id;
-    prepareEmbed(shameeID, shameEmbed, msg);
+    prepareEmbed(mentioned.id, shameEmbed, msg);
   }
-
-  Member.findByIdAndUpdate(shameeID, { $inc: { 'numberOfTimesShammed': 1 } }).exec();
 
 }
 
@@ -62,4 +56,6 @@ function prepareEmbed(shameeID, embed, msg) {
 
     msg.channel.send(embed);
   });
+
+  Member.findByIdAndUpdate(shameeID, { $inc: { 'numberOfTimesShammed': 1 } }).exec();
 }
